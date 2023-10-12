@@ -27,7 +27,6 @@ type TypeMatchers<Received, Inverted extends boolean = false> = {
   not: TypeMatchers<Received, Negate<Inverted>>;
   /**
    * Checks if Received is assignable to Expected.
-   *
    * @example
    * ```typescript
    * // Equivalent Checks:
