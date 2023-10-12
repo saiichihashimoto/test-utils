@@ -1,0 +1,11 @@
+{
+  "fakeTimers": {
+    "enableGlobally": true
+  },
+  "passWithNoTests": true,
+  "preset": "ts-jest",
+  "restoreMocks": true,
+  "testMatch": ["**/?(*.)+(spec|test).[jt]s?(x)"],
+  "verbose": true,
+  "modulePaths": ["."]
+}

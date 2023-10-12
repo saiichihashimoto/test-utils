@@ -1,0 +1,6 @@
+**/dist/**
+*lock.json
+.husky/**
+README.md
+tsup.config.bundled_*.mjs
+vendor/bundle

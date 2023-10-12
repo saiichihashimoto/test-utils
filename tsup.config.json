@@ -1,0 +1,5 @@
+{
+  "entry": ["src/index.ts", "src/internal.ts"],
+  "dts": true,
+  "skipNodeModulesBundle": true
+}

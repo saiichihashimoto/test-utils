@@ -1,0 +1,122 @@
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
+name: "Checks"
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency: checks-${{ github.ref == 'refs/heads/main' && 'main' || github.event.pull_request.head.sha }}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+      - uses: actions/setup-node@v3.8.1
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+      - id: node-modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --ignore-scripts
+
+      - run: npm run build
+
+      - run: npm config set workspaces-update false
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx multi-semantic-release --ignore-private-packages
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v3.8.1
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+      - id: node-modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --ignore-scripts
+
+      - uses: actions/cache@v3
+        with:
+          path: .eslintcache
+          key: eslint-${{ github.run_id }}
+          restore-keys: |
+            eslint-
+      - uses: actions/cache@v3
+        with:
+          path: node_modules/.cache/prettier/.prettier-cache
+          key: prettier-${{ github.run_id }}
+          restore-keys: |
+            prettier-
+
+      - run: npm run lint
+      - run: |
+          if [[ $(git status --porcelain) != "" ]]; then
+            git --no-pager diff --text HEAD
+            exit 1
+          fi
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: actions/setup-node@v3.8.1
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+      - id: node-modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ hashFiles('package-lock.json') }}
+      - if: steps.node-modules.outputs.cache-hit != 'true'
+        run: npm ci --ignore-scripts
+
+      - id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v2
+      - run: |
+          JEST_CACHE_DIRECTORY=$(npx jest --color --showConfig | jq --raw-output ".configs[0].cacheDirectory")
+          echo "JEST_CACHE_DIRECTORY=$JEST_CACHE_DIRECTORY" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        with:
+          path: ${{ env.JEST_CACHE_DIRECTORY }}
+          key: jest-${{ github.run_id }}
+          restore-keys: |
+            jest-
+
+      - run: npm test
