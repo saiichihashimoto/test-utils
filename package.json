@@ -25,7 +25,7 @@
     "@standard-configs/prettier-plugin": "1.0.12",
     "@total-typescript/ts-reset": "0.5.1",
     "@trivago/prettier-plugin-sort-imports": "4.2.0",
-    "@typescript-eslint/eslint-plugin": "6.7.5",
+    "@typescript-eslint/eslint-plugin": "6.8.0",
     "concurrently": "8.2.1",
     "cross-env": "7.0.3",
     "eslint": "8.51.0",
