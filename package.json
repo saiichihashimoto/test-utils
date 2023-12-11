@@ -20,7 +20,7 @@
     "test": "jest --color --cache"
   },
   "dependencies": {
-    "type-fest": "4.8.2"
+    "type-fest": "4.8.3"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",
