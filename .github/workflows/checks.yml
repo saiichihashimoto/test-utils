@@ -30,7 +30,7 @@ jobs:
           node-version-file: "package.json"
           cache: "npm"
       - id: node-modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
@@ -57,7 +57,7 @@ jobs:
           node-version-file: "package.json"
           cache: "npm"
       - id: node-modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
@@ -66,13 +66,13 @@ jobs:
       - if: steps.node-modules.outputs.cache-hit != 'true'
         run: npm ci --ignore-scripts
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: .eslintcache
           key: eslint-${{ github.run_id }}
           restore-keys: |
             eslint-
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: node_modules/.cache/prettier/.prettier-cache
           key: prettier-${{ github.run_id }}
@@ -97,7 +97,7 @@ jobs:
           node-version-file: "package.json"
           cache: "npm"
       - id: node-modules
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             node_modules
@@ -111,7 +111,7 @@ jobs:
       - run: |
           JEST_CACHE_DIRECTORY=$(npx jest --color --showConfig | jq --raw-output ".configs[0].cacheDirectory")
           echo "JEST_CACHE_DIRECTORY=$JEST_CACHE_DIRECTORY" >> $GITHUB_ENV
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: ${{ env.JEST_CACHE_DIRECTORY }}
           key: jest-${{ github.run_id }}
