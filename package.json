@@ -37,7 +37,7 @@
     "eslint": "8.56.0",
     "eslint-config-airbnb": "19.0.4",
     "eslint-config-prettier": "9.1.0",
-    "eslint-import-resolver-typescript": "3.6.1",
+    "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-eslint-comments": "3.2.0",
     "eslint-plugin-fp": "2.3.0",
     "eslint-plugin-import": "2.29.1",
